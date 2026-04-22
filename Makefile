@@ -287,39 +287,27 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 
 	echo "$$LLVM_INSTALL_DIR"
 
-	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6-tools"
-	cd "${PYSIDE_SRC_DIR}/build/shiboken6-tools" && cmake \
-		${PLATFORM_CMAKE_ARGS} \
-		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
-		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}/tools" \
-		-DUSE_PYTHON_VERSION=3 \
-		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
-		-DBUILD_TESTS=OFF \
-		-DCMAKE_BUILD_TYPE=Release \
-		../../sources/shiboken6
-
-	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6-tools" -j
-	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6-tools"
-
-	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6"
-	cd "${PYSIDE_SRC_DIR}/build/shiboken6" && cmake \
+	mkdir -p "${PYSIDE_SRC_DIR}/build_shiboken"
+	cd "${PYSIDE_SRC_DIR}/build_shiboken" && cmake \
 		${PLATFORM_CMAKE_ARGS} \
 		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
 		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
-		-DShiboken6Tools_DIR="${PYSIDE_PREFIX}/tools/lib/cmake/Shiboken6Tools" \
-		-DUSE_PYTHON_VERSION=3 \
-		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
+		-DPython_EXECUTABLE="${PYTHON_EXECUTABLE}" \
+		-DPython_INCLUDE_DIR="${PYTHON_INCLUDE_DIR}" \
+		-DPython_LIBRARY="${PYTHON_LIBRARY}" \
+		-DBUILD_PYSIDE=OFF \
 		-DBUILD_TESTS=OFF \
 		-DCMAKE_BUILD_TYPE=Release \
-		../../sources/shiboken6
+		.. 
 
-	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6" -j
-	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6"
+	cmake --build "${PYSIDE_SRC_DIR}/build_shiboken" -j4
+	cmake --install "${PYSIDE_SRC_DIR}/build_shiboken"
 	@echo "shiboken compiled"
 
 ifeq (${PLATFORM},macos)
 	install_name_tool -add_rpath @executable_path/../../qt/lib "${PYSIDE_PREFIX}/bin/shiboken6"
 ifeq (${ARCH},arm64)
+	# Our arm64 builder has llvm-14 installed with MacPorts
 	install_name_tool -add_rpath /opt/local/libexec/llvm-14/lib "${PYSIDE_PREFIX}/bin/shiboken6"
 endif
 endif
