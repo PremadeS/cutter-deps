@@ -287,7 +287,7 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 
 	echo "$$LLVM_INSTALL_DIR"
 
-	mkdir -p "${PYSIDE_SRC_DIR}/build_shiboken"
+  mkdir -p "${PYSIDE_SRC_DIR}/build_shiboken"
 	cd "${PYSIDE_SRC_DIR}/build_shiboken" && cmake \
 		${PLATFORM_CMAKE_ARGS} \
 		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
@@ -295,9 +295,11 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 		-DPython_EXECUTABLE="${PYTHON_EXECUTABLE}" \
 		-DPython_INCLUDE_DIR="${PYTHON_INCLUDE_DIR}" \
 		-DPython_LIBRARY="${PYTHON_LIBRARY}" \
-		-DBUILD_PYSIDE=OFF \
+		-DUSE_PYTHON_VERSION=3 \
 		-DBUILD_TESTS=OFF \
 		-DCMAKE_BUILD_TYPE=Release \
+		-DSHIBOKEN_ONLY=ON \
+		-DBUILD_PYSIDE=OFF \
 		.. 
 
 	cmake --build "${PYSIDE_SRC_DIR}/build_shiboken" -j4
