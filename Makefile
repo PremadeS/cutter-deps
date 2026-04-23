@@ -288,7 +288,7 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 	@echo "#########################"
 	@echo ""
 
-	cd "${PYSIDE_SRC_DIR}/build"
+	mkdir -p "${PYSIDE_SRC_DIR}\build" && cd ${PYSIDE_SRC_DIR}\build 
  	cmake \	
 			{PLATFORM_CMAKE_ARGS} \
           -DCMAKE_C_COMPILER=$(shell which clang) \
