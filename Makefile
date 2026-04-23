@@ -298,8 +298,8 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 		-DCMAKE_BUILD_TYPE=Release \
 		../../sources/shiboken6_generator
 
-	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6_generator" -j4
-	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
+	cmake --build "${PYSIDE_SRC_DIR}/build/generator/shiboken6" -j4
+	cmake --install "${PYSIDE_SRC_DIR}/build/generator/shiboken6"
 	@echo "shiboken compiled"
 
 ifeq (${PLATFORM},macos)
