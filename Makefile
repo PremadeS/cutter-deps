@@ -288,7 +288,7 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 	echo "$$LLVM_INSTALL_DIR"
 
 	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6"
-	cd "${PYSIDE_SRC_DIR}/build/shiboken6_generator" && cmake \
+	cd "${PYSIDE_SRC_DIR}/build/shiboken6" && cmake \
 		${PLATFORM_CMAKE_ARGS} \
 		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
 		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
@@ -303,10 +303,10 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 	@echo "shiboken compiled"
 
 ifeq (${PLATFORM},macos)
-	install_name_tool -add_rpath @executable_path/../../qt/lib "${PYSIDE_PREFIX}/bin/shiboken6_generator"
+	install_name_tool -add_rpath @executable_path/../../qt/lib "${PYSIDE_PREFIX}/bin/shiboken6"
 ifeq (${ARCH},arm64)
 	# Our arm64 builder has llvm-14 installed with MacPorts
-	install_name_tool -add_rpath /opt/local/libexec/llvm-14/lib "${PYSIDE_PREFIX}/bin/shiboken6_generator"
+	install_name_tool -add_rpath /opt/local/libexec/llvm-14/lib "${PYSIDE_PREFIX}/bin/shiboken6"
 endif
 endif
 
