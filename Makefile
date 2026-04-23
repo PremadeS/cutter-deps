@@ -79,16 +79,17 @@ QT_DEPS=
 endif
 
 QT_VERSION=6.11.0
+QT_VERSION_PYSIDE=6.10.2
 ifeq (${PLATFORM},win)
   # Windows has some issues with symlinks in the tarball
-  PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION}.zip
-  PYSIDE_SRC_SHA256=887326afd5e98af50499536e4b561333d1845a19c6b5493b9256bba973eabc16
+  PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION_PYSIDE}.zip
+  PYSIDE_SRC_SHA256=0e264c4d8e1af1d203ac45e64a0c645a5e58c90eb43122204348ffe8e6ae60a8
 else
-  PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION}.tar.xz
-  PYSIDE_SRC_SHA256=48d5c44d7c3ed861055d5491486e6a220ef5006573cae01a5fae3fb69d786336
+  PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION_PYSIDE}.tar.xz
+  PYSIDE_SRC_SHA256=05eec38bb71bffff8860786e3c0766cc4b86affc72439bd246c54889bdcb7400
 endif
 PYSIDE_SRC_URL=https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-${QT_VERSION}-src/${PYSIDE_SRC_FILE}
-PYSIDE_SRC_DIR=pyside-setup-everywhere-src-${QT_VERSION}
+PYSIDE_SRC_DIR=pyside-setup-everywhere-src-${QT_VERSION_PYSIDE}
 PYSIDE_PREFIX=${ROOT_DIR}/pyside
 
 ifeq (${PLATFORM},linux)
@@ -338,7 +339,6 @@ endif
 		-DCMAKE_CXX_FLAGS=-w \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DMODULES="Core;Gui;Widgets" \
-		-DEXCLUDE_CLASSES="QDirListing" \
 		../../sources/pyside6
 
 ifeq (${PLATFORM},win)
