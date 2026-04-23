@@ -279,6 +279,7 @@ EXTRA_CMAKE_PREFIX="${QT_PREFIX};${PYSIDE_PREFIX}"
 endif
 
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
+	@echo ""
 	@echo "###################################"
 	@echo "# Building Shiboken Generator     #"
 	@echo "###################################"
@@ -301,7 +302,6 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 	@echo "# Building Shiboken     #"
 	@echo "#########################"
 	@echo ""
-
 
 	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6"
 	cd "${PYSIDE_SRC_DIR}/build/shiboken6" && cmake \
