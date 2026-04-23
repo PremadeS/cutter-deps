@@ -304,7 +304,6 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
 		-DBUILD_TESTS=OFF \
 		-DCMAKE_BUILD_TYPE=Release \
-		-DShiboken6_DIR="${PYSIDE_PREFIX}/lib/cmake/Shiboken6" \
 		../../sources/shiboken6
 
 	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6" -j4
@@ -327,6 +326,7 @@ endif
 
 	@echo ${EXTRA_CMAKE_PREFIX}
 
+	# mention why exclude class if it works
 	mkdir -p "${PYSIDE_SRC_DIR}/build/pyside6"
 	cd "${PYSIDE_SRC_DIR}/build/pyside6" && cmake \
 		${PLATFORM_CMAKE_ARGS} \
@@ -338,6 +338,7 @@ endif
 		-DCMAKE_CXX_FLAGS=-w \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DMODULES="Core;Gui;Widgets" \
+		-DEXCLUDE_CLASSES="QDirListing" \
 		../../sources/pyside6
 
 ifeq (${PLATFORM},win)
