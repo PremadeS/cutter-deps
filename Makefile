@@ -279,14 +279,6 @@ EXTRA_CMAKE_PREFIX="${QT_PREFIX};${PYSIDE_PREFIX}"
 endif
 
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
-	@echo ""
-	@echo "###################################"
-	@echo "# Building Shiboken Generator     #"
-	@echo "###################################"
-	@echo ""
-
-	echo "$$LLVM_INSTALL_DIR"
-
 	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
 	cd "${PYSIDE_SRC_DIR}/build/shiboken6_generator" && cmake \
 		${PLATFORM_CMAKE_ARGS} \
@@ -297,7 +289,7 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6_generator" -j4
 	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
 
-  @echo ""
+	@echo ""
 	@echo "#########################"
 	@echo "# Building Shiboken     #"
 	@echo "#########################"
