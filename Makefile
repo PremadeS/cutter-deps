@@ -79,17 +79,16 @@ QT_DEPS=
 endif
 
 QT_VERSION=6.11.0
-QT_VERSION_PYSIDE=6.10.2
 ifeq (${PLATFORM},win)
   # Windows has some issues with symlinks in the tarball
-  PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION_PYSIDE}.zip
-  PYSIDE_SRC_SHA256=0e264c4d8e1af1d203ac45e64a0c645a5e58c90eb43122204348ffe8e6ae60a8
+  PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION}.zip
+  PYSIDE_SRC_SHA256=887326afd5e98af50499536e4b561333d1845a19c6b5493b9256bba973eabc16
 else
-  PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION_PYSIDE}.tar.xz
-  PYSIDE_SRC_SHA256=05eec38bb71bffff8860786e3c0766cc4b86affc72439bd246c54889bdcb7400
+  PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION}.tar.xz
+  PYSIDE_SRC_SHA256=48d5c44d7c3ed861055d5491486e6a220ef5006573cae01a5fae3fb69d786336
 endif
 PYSIDE_SRC_URL=https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-${QT_VERSION}-src/${PYSIDE_SRC_FILE}
-PYSIDE_SRC_DIR=pyside-setup-everywhere-src-${QT_VERSION_PYSIDE}
+PYSIDE_SRC_DIR=pyside-setup-everywhere-src-${QT_VERSION}
 PYSIDE_PREFIX=${ROOT_DIR}/pyside
 
 ifeq (${PLATFORM},linux)
@@ -342,10 +341,27 @@ endif
 		../../sources/pyside6
 
 ifeq (${PLATFORM},win)
+	cmake --build "${PYSIDE_SRC_DIR}/build/pyside6" --target QtCore || exit 0
+
+	powershell -Command "(Get-ChildItem -Recurse '${PYSIDE_SRC_DIR}/build/pyside6' -Filter qdirlisting_wrapper.cpp) | ForEach-Object { (Get-Content $_.FullName) -replace 'IteratorFlag::Default','NoIteratorFlags' | Set-Content $_.FullName }"
+
+	powershell -Command "(Get-ChildItem -Recurse '${PYSIDE_SRC_DIR}/build/pyside6' -Filter qdirlisting_wrapper.cpp) | ForEach-Object { (Get-Content $_.FullName) -replace 'QFlags<QDirIterator::IteratorFlag> cppResult = const_cast<const ::QDirListing \\*\\>\\(cppSelf\\)->iteratorFlags\\(\\)','auto cppResult = const_cast<const ::QDirListing *>(cppSelf)->iteratorFlags()' | Set-Content $_.FullName }"
+
 	cmake --build "${PYSIDE_SRC_DIR}/build/pyside6"
 	cmake --install "${PYSIDE_SRC_DIR}/build/pyside6"
+
 	cp "${LLVM_INSTALL_DIR}/bin/libclang.dll" "${PYSIDE_PREFIX}/bin/"
 else
+	make -C "${PYSIDE_SRC_DIR}/build/pyside6" -j1 QtCore || true
+
+ifeq (${PLATFORM},macos)
+	find "${PYSIDE_SRC_DIR}/build/pyside6" -name "qdirlisting_wrapper.cpp" -exec sed -i '' \
+	's/IteratorFlag::Default/NoIteratorFlags/g' {} +
+else
+	find "${PYSIDE_SRC_DIR}/build/pyside6" -name "qdirlisting_wrapper.cpp" -exec sed -i \
+	's/IteratorFlag::Default/NoIteratorFlags/g' {} +
+endif
+
 	make -C "${PYSIDE_SRC_DIR}/build/pyside6" -j1
 	make -C "${PYSIDE_SRC_DIR}/build/pyside6" install
 endif
