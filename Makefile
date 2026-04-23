@@ -279,13 +279,29 @@ EXTRA_CMAKE_PREFIX="${QT_PREFIX};${PYSIDE_PREFIX}"
 endif
 
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
+	@echo "###################################"
+	@echo "# Building Shiboken Generator     #"
+	@echo "###################################"
 	@echo ""
+
+	echo "$$LLVM_INSTALL_DIR"
+
+	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
+	cd "${PYSIDE_SRC_DIR}/build/shiboken6_generator" && cmake \
+		${PLATFORM_CMAKE_ARGS} \
+		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
+		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
+		../../sources/shiboken6_generator
+
+	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6_generator" -j4
+	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
+
+  @echo ""
 	@echo "#########################"
 	@echo "# Building Shiboken     #"
 	@echo "#########################"
 	@echo ""
 
-	echo "$$LLVM_INSTALL_DIR"
 
 	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6"
 	cd "${PYSIDE_SRC_DIR}/build/shiboken6" && cmake \
@@ -296,6 +312,7 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
 		-DBUILD_TESTS=OFF \
 		-DCMAKE_BUILD_TYPE=Release \
+		-DShiboken6_DIR="${PYSIDE_PREFIX}/lib/cmake/Shiboken6" \
 		../../sources/shiboken6
 
 	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6" -j4
