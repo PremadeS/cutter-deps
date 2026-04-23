@@ -61,9 +61,9 @@ ${PATCHELF_SRC_DIR}_target=PATCHELF_SRC
 ifeq (${QT_PREFIX},)
 QT_BIN_FILE=cutter-deps-qt-${PLATFORM}-${ARCH}.tar.gz
 PACKAGE_FILE=cutter-deps-${PLATFORM}-${ARCH}.tar.gz
-QT_BIN_URL=https://github.com/rizinorg/cutter-deps-qt/releases/download/v14/${QT_BIN_FILE}
+QT_BIN_URL=https://github.com/premades/cutter-deps-qt/releases/download/v1.0.0/${QT_BIN_FILE}
 QT_BIN_SHA256_linux_x86_64=2e7f6af35b2aab46b5fcd637b2035527ab378c3dc209bcbb84cd82e6cea120fb
-QT_BIN_SHA256_macos_arm64=80cb4faf70dc4cca9c745ecaf6a924fb6b6ed55a3dd0ae45071b10c53bd4a294
+QT_BIN_SHA256_macos_arm64=7c6bcb352ac5376cc5c72a50aba782335a11500cb9823256eb49b0cfeaf8b458
 QT_BIN_SHA256_macos_x86_64=7d76c9630020ab52e97e43fbb251c3c8ff9669c1b631d88a2594cd6279cfe1ca
 QT_BIN_SHA256_win_x86_64=61e5023363d13eabf8c62e86c6dd6f0cb80a001bb4e51d0e1348387b13857ca3
 QT_BIN_SHA256=${QT_BIN_SHA256_${PLATFORM}_${ARCH}}
