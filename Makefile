@@ -287,7 +287,7 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 
 	echo "$$LLVM_INSTALL_DIR"
 
-	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
+	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6"
 	cd "${PYSIDE_SRC_DIR}/build/shiboken6_generator" && cmake \
 		${PLATFORM_CMAKE_ARGS} \
 		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
@@ -296,10 +296,10 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
 		-DBUILD_TESTS=OFF \
 		-DCMAKE_BUILD_TYPE=Release \
-		../../sources/shiboken6_generator
+		../../sources/shiboken6
 
-	cmake --build "${PYSIDE_SRC_DIR}/build/generator/shiboken6" -j4
-	cmake --install "${PYSIDE_SRC_DIR}/build/generator/shiboken6"
+	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6" -j4
+	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6"
 	@echo "shiboken compiled"
 
 ifeq (${PLATFORM},macos)
