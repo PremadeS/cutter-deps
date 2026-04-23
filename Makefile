@@ -282,84 +282,30 @@ endif
 LLVM_ROOT := $(shell brew --prefix llvm@18)
 
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
-	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
-	cd "${PYSIDE_SRC_DIR}/build/shiboken6_generator" && cmake \
-		${PLATFORM_CMAKE_ARGS} \
-		-DCMAKE_C_COMPILER=$(shell which clang) \
-		-DCMAKE_CXX_COMPILER=$(shell which clang++) \
-		-DCLANG_INSTALL_DIR=$(LLVM_ROOT) \
-		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
-		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
-		../../sources/shiboken6_generator
-
-	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6_generator" -j4
-	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
-
 	@echo ""
 	@echo "#########################"
-	@echo "# Building Shiboken     #"
+	@echo "# Building everythang    #"
 	@echo "#########################"
 	@echo ""
 
-	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6"
-	cd "${PYSIDE_SRC_DIR}/build/shiboken6" && cmake \
-		${PLATFORM_CMAKE_ARGS} \
-		-DCMAKE_C_COMPILER=$(shell which clang) \
-		-DCMAKE_CXX_COMPILER=$(shell which clang++) \
-		-DCLANG_INSTALL_DIR=$(LLVM_ROOT) \
-		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
-		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
-		-DUSE_PYTHON_VERSION=3 \
-		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
-		-DBUILD_TESTS=OFF \
-		-DCMAKE_BUILD_TYPE=Release \
-		../../sources/shiboken6
+	cd "${PYSIDE_SRC_DIR}/build"
+ 	cmake \	
+			{PLATFORM_CMAKE_ARGS} \
+          -DCMAKE_C_COMPILER=$(shell which clang) \
+          -DCMAKE_CXX_COMPILER=$(shell which clang++) \
+          -DCMAKE_PREFIX_PATH=${EXTRA_CMAKE_PREFIX} \
+          -DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
+          -DCLANG_INSTALL_DIR=$(LLVM_ROOT) \
+          -DUSE_PYTHON_VERSION=3 \
+          -DPython_ROOT_DIR="${PYTHON_PREFIX}" \
+          -DBUILD_TESTS=OFF \
+          -DCMAKE_CXX_FLAGS=-w \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DMODULES="Core;Gui;Widgets" \
+           ..
 
-	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6" -j4
-	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6"
-	@echo "shiboken compiled"
-
-ifeq (${PLATFORM},macos)
-	install_name_tool -add_rpath @executable_path/../../qt/lib "${PYSIDE_PREFIX}/bin/shiboken6"
-ifeq (${ARCH},arm64)
-	# Our arm64 builder has llvm-14 installed with MacPorts
-	install_name_tool -add_rpath /opt/local/libexec/llvm-14/lib "${PYSIDE_PREFIX}/bin/shiboken6"
-endif
-endif
-
-	@echo ""
-	@echo "#########################"
-	@echo "# Building PySide       #"
-	@echo "#########################"
-	@echo ""
-
-	@echo ${EXTRA_CMAKE_PREFIX}
-
-	# TODO: check for windows the CXX_COMPILER
-	mkdir -p "${PYSIDE_SRC_DIR}/build/pyside6"
-	cd "${PYSIDE_SRC_DIR}/build/pyside6" && cmake \
-		${PLATFORM_CMAKE_ARGS} \
-		-DCMAKE_C_COMPILER=$(shell which clang) \
-		-DCMAKE_CXX_COMPILER=$(shell which clang++) \
-		-DCMAKE_PREFIX_PATH=${EXTRA_CMAKE_PREFIX} \
-		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
-		-DCLANG_INSTALL_DIR=$(LLVM_ROOT) \
-		-DUSE_PYTHON_VERSION=3 \
-		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
-		-DBUILD_TESTS=OFF \
-		-DCMAKE_CXX_FLAGS=-w \
-		-DCMAKE_BUILD_TYPE=Release \
-		-DMODULES="Core;Gui;Widgets" \
-		../../sources/pyside6
-
-ifeq (${PLATFORM},win)
-	cmake --build "${PYSIDE_SRC_DIR}/build/pyside6"
-	cmake --install "${PYSIDE_SRC_DIR}/build/pyside6"
-	cp "${LLVM_INSTALL_DIR}/bin/libclang.dll" "${PYSIDE_PREFIX}/bin/"
-else
-	make -C "${PYSIDE_SRC_DIR}/build/pyside6" -j1
-	make -C "${PYSIDE_SRC_DIR}/build/pyside6" install
-endif
+ 	make -j1
+  make install
 
 .PHONY: clean-pyside
 clean-pyside:
