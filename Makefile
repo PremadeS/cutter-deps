@@ -22,10 +22,10 @@ endif
 PKG_FILES=pyside
 
 ifeq (${PYTHON_WINDOWS},)
-PYTHON_VERSION=3.14.4
-PYTHON_VERSION_MAJOR_MINOR=3.14
+PYTHON_VERSION=3.12.4
+PYTHON_VERSION_MAJOR_MINOR=3.12
 PYTHON_SRC_FILE=Python-${PYTHON_VERSION}.tar.xz
-PYTHON_SRC_SHA256=d923c51303e38e249136fc1bdf3568d56ecb03214efdef48516176d3d7faaef8
+PYTHON_SRC_SHA256=f6d419a6d8743ab26700801b4908d26d97e8b986e14f95de31b32de2b0e79554
 
 PYTHON_SRC_URL=https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz
 PYTHON_SRC_DIR=Python-${PYTHON_VERSION}
@@ -61,9 +61,9 @@ ${PATCHELF_SRC_DIR}_target=PATCHELF_SRC
 ifeq (${QT_PREFIX},)
 QT_BIN_FILE=cutter-deps-qt-${PLATFORM}-${ARCH}.tar.gz
 PACKAGE_FILE=cutter-deps-${PLATFORM}-${ARCH}.tar.gz
-QT_BIN_URL=https://github.com/rizinorg/cutter-deps-qt/releases/download/v14/${QT_BIN_FILE}
+QT_BIN_URL=https://github.com/premades/cutter-deps-qt/releases/download/v1.0.0/${QT_BIN_FILE}
 QT_BIN_SHA256_linux_x86_64=2e7f6af35b2aab46b5fcd637b2035527ab378c3dc209bcbb84cd82e6cea120fb
-QT_BIN_SHA256_macos_arm64=80cb4faf70dc4cca9c745ecaf6a924fb6b6ed55a3dd0ae45071b10c53bd4a294
+QT_BIN_SHA256_macos_arm64=7c6bcb352ac5376cc5c72a50aba782335a11500cb9823256eb49b0cfeaf8b458
 QT_BIN_SHA256_macos_x86_64=7d76c9630020ab52e97e43fbb251c3c8ff9669c1b631d88a2594cd6279cfe1ca
 QT_BIN_SHA256_win_x86_64=61e5023363d13eabf8c62e86c6dd6f0cb80a001bb4e51d0e1348387b13857ca3
 QT_BIN_SHA256=${QT_BIN_SHA256_${PLATFORM}_${ARCH}}
@@ -287,8 +287,8 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 
 	echo "$$LLVM_INSTALL_DIR"
 
-	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6"
-	cd "${PYSIDE_SRC_DIR}/build/shiboken6" && cmake \
+	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
+	cd "${PYSIDE_SRC_DIR}/build/shiboken6_generator" && cmake \
 		${PLATFORM_CMAKE_ARGS} \
 		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
 		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
@@ -296,17 +296,17 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
 		-DBUILD_TESTS=OFF \
 		-DCMAKE_BUILD_TYPE=Release \
-		../../sources/shiboken6
+		../../sources/shiboken6_generator
 
-	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6" -j
-	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6"
+	cmake --build "${PYSIDE_SRC_DIR}/build/generator/shiboken6" -j4
+	cmake --install "${PYSIDE_SRC_DIR}/build/generator/shiboken6"
 	@echo "shiboken compiled"
 
 ifeq (${PLATFORM},macos)
-	install_name_tool -add_rpath @executable_path/../../qt/lib "${PYSIDE_PREFIX}/bin/shiboken6"
+	install_name_tool -add_rpath @executable_path/../../qt/lib "${PYSIDE_PREFIX}/bin/shiboken6_generator"
 ifeq (${ARCH},arm64)
 	# Our arm64 builder has llvm-14 installed with MacPorts
-	install_name_tool -add_rpath /opt/local/libexec/llvm-14/lib "${PYSIDE_PREFIX}/bin/shiboken6"
+	install_name_tool -add_rpath /opt/local/libexec/llvm-14/lib "${PYSIDE_PREFIX}/bin/shiboken6_generator"
 endif
 endif
 
