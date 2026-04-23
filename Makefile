@@ -278,12 +278,16 @@ else
 EXTRA_CMAKE_PREFIX="${QT_PREFIX};${PYSIDE_PREFIX}"
 endif
 
+# TODO: for other os if works
+LLVM_ROOT := $(shell brew --prefix llvm@18)
+
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
 	cd "${PYSIDE_SRC_DIR}/build/shiboken6_generator" && cmake \
 		${PLATFORM_CMAKE_ARGS} \
 		-DCMAKE_C_COMPILER=$(shell which clang) \
 		-DCMAKE_CXX_COMPILER=$(shell which clang++) \
+		-DCLANG_INSTALL_DIR=$(LLVM_ROOT) \
 		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
 		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
 		../../sources/shiboken6_generator
@@ -302,6 +306,7 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 		${PLATFORM_CMAKE_ARGS} \
 		-DCMAKE_C_COMPILER=$(shell which clang) \
 		-DCMAKE_CXX_COMPILER=$(shell which clang++) \
+		-DCLANG_INSTALL_DIR=$(LLVM_ROOT) \
 		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
 		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
 		-DUSE_PYTHON_VERSION=3 \
@@ -338,6 +343,7 @@ endif
 		-DCMAKE_CXX_COMPILER=$(shell which clang++) \
 		-DCMAKE_PREFIX_PATH=${EXTRA_CMAKE_PREFIX} \
 		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
+		-DCLANG_INSTALL_DIR=$(LLVM_ROOT) \
 		-DUSE_PYTHON_VERSION=3 \
 		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
 		-DBUILD_TESTS=OFF \
