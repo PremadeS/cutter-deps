@@ -341,27 +341,10 @@ endif
 		../../sources/pyside6
 
 ifeq (${PLATFORM},win)
-	cmake --build "${PYSIDE_SRC_DIR}/build/pyside6" --target QtCore || exit 0
-
-	powershell -Command "(Get-ChildItem -Recurse '${PYSIDE_SRC_DIR}/build/pyside6' -Filter qdirlisting_wrapper.cpp) | ForEach-Object { (Get-Content $_.FullName) -replace 'IteratorFlag::Default','NoIteratorFlags' | Set-Content $_.FullName }"
-
-	powershell -Command "(Get-ChildItem -Recurse '${PYSIDE_SRC_DIR}/build/pyside6' -Filter qdirlisting_wrapper.cpp) | ForEach-Object { (Get-Content $_.FullName) -replace 'QFlags<QDirIterator::IteratorFlag> cppResult = const_cast<const ::QDirListing \\*\\>\\(cppSelf\\)->iteratorFlags\\(\\)','auto cppResult = const_cast<const ::QDirListing *>(cppSelf)->iteratorFlags()' | Set-Content $_.FullName }"
-
 	cmake --build "${PYSIDE_SRC_DIR}/build/pyside6"
 	cmake --install "${PYSIDE_SRC_DIR}/build/pyside6"
-
 	cp "${LLVM_INSTALL_DIR}/bin/libclang.dll" "${PYSIDE_PREFIX}/bin/"
 else
-	make -C "${PYSIDE_SRC_DIR}/build/pyside6" -j1 QtCore || true
-
-ifeq (${PLATFORM},macos)
-	find "${PYSIDE_SRC_DIR}/build/pyside6" -name "qdirlisting_wrapper.cpp" -exec sed -i '' \
-	's/IteratorFlag::Default/NoIteratorFlags/g' {} +
-else
-	find "${PYSIDE_SRC_DIR}/build/pyside6" -name "qdirlisting_wrapper.cpp" -exec sed -i \
-	's/IteratorFlag::Default/NoIteratorFlags/g' {} +
-endif
-
 	make -C "${PYSIDE_SRC_DIR}/build/pyside6" -j1
 	make -C "${PYSIDE_SRC_DIR}/build/pyside6" install
 endif
