@@ -278,34 +278,30 @@ else
 EXTRA_CMAKE_PREFIX="${QT_PREFIX};${PYSIDE_PREFIX}"
 endif
 
-# TODO: for other os if works
-LLVM_ROOT := $(shell brew --prefix llvm@18)
+# Ensure LLVM_ROOT is defined
+LLVM_ROOT := $(shell brew --prefix llvm)
 
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
-	@echo ""
-	@echo "#########################"
-	@echo "# Building everythang    #"
-	@echo "#########################"
-	@echo ""
-
-	mkdir -p "${PYSIDE_SRC_DIR}\build" && cd ${PYSIDE_SRC_DIR}\build 
- 	cmake \	
-			{PLATFORM_CMAKE_ARGS} \
-          -DCMAKE_C_COMPILER=$(shell which clang) \
-          -DCMAKE_CXX_COMPILER=$(shell which clang++) \
-          -DCMAKE_PREFIX_PATH=${EXTRA_CMAKE_PREFIX} \
-          -DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
-          -DCLANG_INSTALL_DIR=$(LLVM_ROOT) \
-          -DUSE_PYTHON_VERSION=3 \
-          -DPython_ROOT_DIR="${PYTHON_PREFIX}" \
-          -DBUILD_TESTS=OFF \
-          -DCMAKE_CXX_FLAGS=-w \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DMODULES="Core;Gui;Widgets" \
-           ..
-
- 	make -j1
-  make install
+	rm -rf "${PYSIDE_SRC_DIR}/build"
+	mkdir -p "${PYSIDE_SRC_DIR}/build"
+	cd "${PYSIDE_SRC_DIR}/build" && cmake \
+		${PLATFORM_CMAKE_ARGS} \
+		-DCMAKE_C_COMPILER="$(LLVM_ROOT)/bin/clang" \
+		-DCMAKE_CXX_COMPILER="$(LLVM_ROOT)/bin/clang++" \
+		-DCMAKE_PREFIX_PATH="${EXTRA_CMAKE_PREFIX}" \
+		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
+		-DCLANG_INSTALL_DIR="$(LLVM_ROOT)" \
+		-DSHIBOKEN_CLANG_LIBPATH="$(LLVM_ROOT)/lib/libclang.dylib" \
+		-DNO_DESIGNER=ON \
+		-DNO_WEBENGINE=ON \
+		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
+		-DBUILD_TESTS=OFF \
+		-DCMAKE_CXX_FLAGS=-w \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DMODULES="Core;Gui;Widgets" \
+		..
+	$(MAKE) -C "${PYSIDE_SRC_DIR}/build" -j1
+	$(MAKE) -C "${PYSIDE_SRC_DIR}/build" install
 
 .PHONY: clean-pyside
 clean-pyside:
