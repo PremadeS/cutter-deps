@@ -82,10 +82,10 @@ QT_VERSION=6.11.0
 ifeq (${PLATFORM},win)
   # Windows has some issues with symlinks in the tarball
   PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION}.zip
-  PYSIDE_SRC_SHA256=887326afd5e98af50499536e4b561333d1845a19c6b5493b9256bba973eabc16
+  PYSIDE_SRC_SHA256=cde443ce209787e0008a2c510d9d390423ea8876083b356d8148272c1234c102
 else
   PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION}.tar.xz
-  PYSIDE_SRC_SHA256=48d5c44d7c3ed861055d5491486e6a220ef5006573cae01a5fae3fb69d786336
+  PYSIDE_SRC_SHA256=3a2b0d0d6e78c9aa5ddc7f06ca4b6f11a3fe14560baeb148eea53b5d98e368c7
 endif
 PYSIDE_SRC_URL=https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-${QT_VERSION}-src/${PYSIDE_SRC_FILE}
 PYSIDE_SRC_DIR=pyside-setup-everywhere-src-${QT_VERSION}
@@ -263,6 +263,7 @@ ${PYSIDE_SRC_DIR}:
 	# which would mess up finding the actual modules later.
 	patch "${PYSIDE_SRC_DIR}/sources/pyside6/CMakeLists.txt" patch/pyside-5.15.2/CMakeLists.txt.patch
 
+
 ifneq (${QT_OPENGL_ENABLED},1)
 	# Patches to remove OpenGL-related source files.
 	patch "${PYSIDE_SRC_DIR}/sources/pyside2/PySide2/QtGui/CMakeLists.txt" patch/pyside-5.12.1/QtGui-CMakeLists.txt.patch
@@ -277,24 +278,28 @@ else
 EXTRA_CMAKE_PREFIX="${QT_PREFIX};${PYSIDE_PREFIX}"
 endif
 
-# Ensure LLVM_ROOT is defined
-LLVM_ROOT := $(shell brew --prefix llvm)
-
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
-	mkdir -p "${PYSIDE_SRC_DIR}/sources/shiboken6_generator/build"
-	cd "${PYSIDE_SRC_DIR}/sources/shiboken6_generator/build" && cmake .. \
-		${PLATFORM_CMAKE_ARGS} \
-		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
-		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
-
-	cmake --build .
-	cmake --install .
-
 	@echo ""
 	@echo "#########################"
 	@echo "# Building Shiboken     #"
 	@echo "#########################"
 	@echo ""
+
+	echo "$$LLVM_INSTALL_DIR"
+
+	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
+	cd "${PYSIDE_SRC_DIR}/build/shiboken6_generator" && cmake \
+		${PLATFORM_CMAKE_ARGS} \
+		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
+		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
+		-DUSE_PYTHON_VERSION=3 \
+		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
+		-DBUILD_TESTS=OFF \
+		-DCMAKE_BUILD_TYPE=Release \
+		../../sources/shiboken6_generator
+
+	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6_generator" -j
+	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
 
 	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6"
 	cd "${PYSIDE_SRC_DIR}/build/shiboken6" && cmake \
@@ -307,7 +312,7 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 		-DCMAKE_BUILD_TYPE=Release \
 		../../sources/shiboken6
 
-	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6" -j4
+	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6" -j
 	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6"
 	@echo "shiboken compiled"
 
@@ -327,7 +332,6 @@ endif
 
 	@echo ${EXTRA_CMAKE_PREFIX}
 
-	# mention why exclude class if it works
 	mkdir -p "${PYSIDE_SRC_DIR}/build/pyside6"
 	cd "${PYSIDE_SRC_DIR}/build/pyside6" && cmake \
 		${PLATFORM_CMAKE_ARGS} \
@@ -338,13 +342,17 @@ endif
 		-DBUILD_TESTS=OFF \
 		-DCMAKE_CXX_FLAGS=-w \
 		-DCMAKE_BUILD_TYPE=Release \
->>>>>>> eacf1b2 (testing shiboken6_gen)
 		-DMODULES="Core;Gui;Widgets" \
-		-DBUILD_TESTS=OFF \
-		-DCMAKE_BUILD_TYPE=Release \
-		..
-	$(MAKE) -C "${PYSIDE_SRC_DIR}/build" -j1
-	$(MAKE) -C "${PYSIDE_SRC_DIR}/build" install
+		../../sources/pyside6
+
+ifeq (${PLATFORM},win)
+	cmake --build "${PYSIDE_SRC_DIR}/build/pyside6"
+	cmake --install "${PYSIDE_SRC_DIR}/build/pyside6"
+	cp "${LLVM_INSTALL_DIR}/bin/libclang.dll" "${PYSIDE_PREFIX}/bin/"
+else
+	make -C "${PYSIDE_SRC_DIR}/build/pyside6" -j1
+	make -C "${PYSIDE_SRC_DIR}/build/pyside6" install
+endif
 
 .PHONY: clean-pyside
 clean-pyside:
