@@ -343,7 +343,7 @@ endif
 		-DCMAKE_CXX_FLAGS=-w \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DMODULES="Core;Gui;Widgets" \
-		-DCMAKE_CXX_FLAGS="-Wno-error=invalid-conversion -Wno-error=header-hygiene" \
+		-DCMAKE_CXX_FLAGS="-Wno-everything -fpermissive" \
 		../../sources/pyside6
 
 ifeq (${PLATFORM},win)
