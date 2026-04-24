@@ -287,8 +287,8 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
 		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
 
-	cmake . --build
-	cmake . --install
+	cmake --build .
+	cmake --install .
 
 	@echo ""
 	@echo "#########################"
