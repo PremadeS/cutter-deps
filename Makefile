@@ -285,17 +285,62 @@ endif
 LLVM_ROOT := $(shell brew --prefix llvm)
 
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
-	rm -rf "${PYSIDE_SRC_DIR}/build"
-	mkdir -p "${PYSIDE_SRC_DIR}/build"
-	cd "${PYSIDE_SRC_DIR}/build" && cmake \
-		-DCMAKE_C_COMPILER="$(LLVM_ROOT)/bin/clang" \
-		-DCMAKE_CXX_COMPILER="$(LLVM_ROOT)/bin/clang++" \
-		-DCMAKE_PREFIX_PATH="$(QT_PREFIX);$(PYSIDE_PREFIX)" \
-		-DCMAKE_INSTALL_PREFIX="$(PYSIDE_PREFIX)" \
-		-DCLANG_INSTALL_DIR="$(LLVM_ROOT)" \
-		-DSHIBOKEN_CLANG_LIBPATH="$(LLVM_ROOT)/lib/libclang.dylib" \
-		-DNO_DESIGNER=ON \
-		-DNO_WEBENGINE=ON \
+	mkdir -p "${PYSIDE_SRC_DIR}/sources/shiboken6_generator/build"
+	cd "${PYSIDE_SRC_DIR}/sources/shiboken6_generator/build" && cmake .. \
+		${PLATFORM_CMAKE_ARGS} \
+
+	cmake . --build
+	cmake . --install
+
+	@echo ""
+	@echo "#########################"
+	@echo "# Building Shiboken     #"
+	@echo "#########################"
+	@echo ""
+
+	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6"
+	cd "${PYSIDE_SRC_DIR}/build/shiboken6" && cmake \
+		${PLATFORM_CMAKE_ARGS} \
+		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
+		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
+		-DUSE_PYTHON_VERSION=3 \
+		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
+		-DBUILD_TESTS=OFF \
+		-DCMAKE_BUILD_TYPE=Release \
+		../../sources/shiboken6
+
+	cmake --build "${PYSIDE_SRC_DIR}/build/shiboken6" -j4
+	cmake --install "${PYSIDE_SRC_DIR}/build/shiboken6"
+	@echo "shiboken compiled"
+
+ifeq (${PLATFORM},macos)
+	install_name_tool -add_rpath @executable_path/../../qt/lib "${PYSIDE_PREFIX}/bin/shiboken6"
+ifeq (${ARCH},arm64)
+	# Our arm64 builder has llvm-14 installed with MacPorts
+	install_name_tool -add_rpath /opt/local/libexec/llvm-14/lib "${PYSIDE_PREFIX}/bin/shiboken6"
+endif
+endif
+
+	@echo ""
+	@echo "#########################"
+	@echo "# Building PySide       #"
+	@echo "#########################"
+	@echo ""
+
+	@echo ${EXTRA_CMAKE_PREFIX}
+
+	# mention why exclude class if it works
+	mkdir -p "${PYSIDE_SRC_DIR}/build/pyside6"
+	cd "${PYSIDE_SRC_DIR}/build/pyside6" && cmake \
+		${PLATFORM_CMAKE_ARGS} \
+		-DCMAKE_PREFIX_PATH=${EXTRA_CMAKE_PREFIX} \
+		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
+		-DUSE_PYTHON_VERSION=3 \
+		-DPython_ROOT_DIR="${PYTHON_PREFIX}" \
+		-DBUILD_TESTS=OFF \
+		-DCMAKE_CXX_FLAGS=-w \
+		-DCMAKE_BUILD_TYPE=Release \
+>>>>>>> eacf1b2 (testing shiboken6_gen)
 		-DMODULES="Core;Gui;Widgets" \
 		-DBUILD_TESTS=OFF \
 		-DCMAKE_BUILD_TYPE=Release \
