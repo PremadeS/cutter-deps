@@ -82,10 +82,10 @@ QT_VERSION=6.11.0
 ifeq (${PLATFORM},win)
   # Windows has some issues with symlinks in the tarball
   PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION}.zip
-  PYSIDE_SRC_SHA256=cde443ce209787e0008a2c510d9d390423ea8876083b356d8148272c1234c102
+  PYSIDE_SRC_SHA256=887326afd5e98af50499536e4b561333d1845a19c6b5493b9256bba973eabc16
 else
   PYSIDE_SRC_FILE=pyside-setup-everywhere-src-${QT_VERSION}.tar.xz
-  PYSIDE_SRC_SHA256=3a2b0d0d6e78c9aa5ddc7f06ca4b6f11a3fe14560baeb148eea53b5d98e368c7
+  PYSIDE_SRC_SHA256=48d5c44d7c3ed861055d5491486e6a220ef5006573cae01a5fae3fb69d786336
 endif
 PYSIDE_SRC_URL=https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-${QT_VERSION}-src/${PYSIDE_SRC_FILE}
 PYSIDE_SRC_DIR=pyside-setup-everywhere-src-${QT_VERSION}
