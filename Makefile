@@ -320,7 +320,7 @@ ifeq (${PLATFORM},macos)
 	install_name_tool -add_rpath @executable_path/../../qt/lib "${PYSIDE_PREFIX}/bin/shiboken6"
 ifeq (${ARCH},arm64)
 	# Our arm64 builder has llvm-14 installed with MacPorts
-	install_name_tool -add_rpath /opt/local/libexec/llvm-14/lib "${PYSIDE_PREFIX}/bin/shiboken6"
+	install_name_tool -add_rpath /opt/local/libexec/llvm-20/lib "${PYSIDE_PREFIX}/bin/shiboken6"
 endif
 endif
 
@@ -343,7 +343,6 @@ endif
 		-DCMAKE_CXX_FLAGS=-w \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DMODULES="Core;Gui;Widgets" \
-		-DCMAKE_CXX_FLAGS="-Wno-everything -fpermissive" \
 		../../sources/pyside6
 
 ifeq (${PLATFORM},win)

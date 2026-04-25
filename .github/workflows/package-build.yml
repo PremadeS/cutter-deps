@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
     steps:
@@ -56,7 +56,7 @@ jobs:
           asset_name: ${{ env.UPLOAD_FILE }}
           asset_content_type: ${{ env.UPLOAD_ASSET_TYPE }}
   build-windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     strategy:
       fail-fast: false
     steps:
@@ -121,8 +121,7 @@ jobs:
     - name: build macos
       run: |
         set -euo pipefail
-        brew install llvm@20 ccache
-        brew link llvm@20
+        brew install llvm@20 ccache && brew link llvm@20
         
         if [ "${{ matrix.arch }}" = "arm64" ]; then
           LLVM_PREFIX="/opt/homebrew/opt/llvm"
