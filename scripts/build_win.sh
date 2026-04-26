@@ -10,11 +10,11 @@ export CMAKE_PREFIX_PATH=$LLVM_INSTALL_DIR
 
 
 # REMOVE any gcc installs (possibly provided by msys) from path, we are trying to do a MSVC based build
-which cl || echo "no cl"
-which gcc || echo "no gcc"
-export PATH=`echo $PATH | tr ":" "\n" | grep -v "mingw64" | grep -v "Strawberry" | tr "\n" ":"`
-echo $PATH
-which gcc || echo "No GCC in path, OK!"
+# which cl || echo "no cl"
+# which gcc || echo "no gcc"
+# export PATH=`echo $PATH | tr ":" "\n" | grep -v "mingw64" | grep -v "Strawberry" | tr "\n" ":"`
+# echo $PATH
+# which gcc || echo "No GCC in path, OK!"
 
 
 make PLATFORM=win "PYTHON_WINDOWS=/C/hostedtoolcache/windows/Python/3.12.4/x64/"
