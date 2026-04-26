@@ -28,7 +28,9 @@ jobs:
                              cmake \
                              mesa-common-dev \
                              libgl1-mesa-dev \
-                             curl
+                             libxkbcommon-dev \
+                             libxkbcommon-x11-dev \
+                             curl 
         curl -O https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh 20

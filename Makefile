@@ -273,9 +273,9 @@ endif
 ifeq (${PLATFORM},win)
 # automatic msys -> windows path conversion doesn't detect semicolon separated paths
 # cmake uses ; on all platforms
-EXTRA_CMAKE_PREFIX="${QT_PREFIX}:${PYSIDE_PREFIX}"
-else
 EXTRA_CMAKE_PREFIX="${QT_PREFIX};${PYSIDE_PREFIX}"
+else
+EXTRA_CMAKE_PREFIX="${QT_PREFIX}:${PYSIDE_PREFIX}"
 endif
 
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
