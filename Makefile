@@ -270,13 +270,7 @@ ifneq (${QT_OPENGL_ENABLED},1)
 	patch "${PYSIDE_SRC_DIR}/sources/pyside2/PySide2/QtWidgets/CMakeLists.txt" patch/pyside-5.12.1/QtWidgets-CMakeLists.txt.patch
 endif
 
-ifeq (${PLATFORM},win)
-# automatic msys -> windows path conversion doesn't detect semicolon separated paths
-# cmake uses ; on all platforms
 EXTRA_CMAKE_PREFIX="${QT_PREFIX};${PYSIDE_PREFIX}"
-else
-EXTRA_CMAKE_PREFIX="${QT_PREFIX}:${PYSIDE_PREFIX}"
-endif
 
 pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 	@echo ""
