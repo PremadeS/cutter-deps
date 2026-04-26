@@ -32,6 +32,7 @@ jobs:
         curl -O https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh 20
+        sudo apt-get -y install llvm-20-dev libclang-20-dev
         export LLVM_DIR=/usr/lib/llvm-20/lib/cmake/llvm
         export Clang_DIR=/usr/lib/llvm-20/lib/cmake/clang
         export PATH=/usr/lib/llvm-20/bin:$PATH
@@ -72,7 +73,7 @@ jobs:
       shell: cmd
       run: |
         pwd
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
         where cl
         where python
         set MSYS2_PATH_TYPE=inherit
