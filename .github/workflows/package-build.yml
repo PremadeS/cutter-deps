@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
     - name: build linux outputs
       run: |
         sudo apt-get -y update
@@ -64,11 +64,11 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
-        python-version: '3.11'
+        python-version: '3.12'
     - name: build windows ouptuts
       shell: cmd
       run: |
@@ -121,7 +121,7 @@ jobs:
             os: macos-14
             arch: arm64
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
     - name: build macos
       run: |
         set -euo pipefail
@@ -148,7 +148,7 @@ jobs:
         make ARCH=${{ matrix.arch }}
         echo UPLOAD_FILE=cutter-deps-macos-${{ matrix.arch }}.tar.gz >> $GITHUB_ENV
         echo UPLOAD_ASSET_TYPE=application/gzip >> $GITHUB_ENV
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: ${{ env.UPLOAD_FILE }}
         path: ${{ env.UPLOAD_FILE }}
