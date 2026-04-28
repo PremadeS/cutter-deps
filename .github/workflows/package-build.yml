@@ -126,39 +126,25 @@ jobs:
       run: |
         set -euo pipefail
         brew install llvm@20 ccache && brew link llvm@20
-        
         if [ "${{ matrix.arch }}" = "arm64" ]; then
-          LLVM_PREFIX="/opt/homebrew/opt/llvm"
+          LLVM_PREFIX="$HOMEBREW_PREFIX/opt/llvm"
         else
           LLVM_PREFIX="/usr/local/opt/llvm"
         fi
-        
-        export PATH="$LLVM_PREFIX/bin:$PATH"
-        export LDFLAGS="-L$LLVM_PREFIX/lib"
-        export CPPFLAGS="-I$LLVM_PREFIX/include"
-        export CMAKE_PREFIX_PATH="$LLVM_PREFIX"
-        export CLANG_INSTALL_DIR="$LLVM_PREFIX"
-        export DYLD_LIBRARY_PATH="$LLVM_PREFIX/lib:${DYLD_LIBRARY_PATH:-}"
-        
         echo "###### Applications ######"
         ls /Applications
         echo "###### XCode Info ######"
         sudo xcode-select --reset
-        sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
         export BUILD_SDK_PATH=$(xcrun --show-sdk-path)
         echo "$BUILD_SDK_PATH"
         echo "###### xcode-select Info ######"
         xcode-select -print-path
         echo "###### LLVM Info ######"
         which clang
-        clang --version
         brew info llvm
         echo "###### Make ######"
         export MACOSX_DEPLOYMENT_TARGET=11.0
         export MIN_SUPPORTED_MACOSX_DEPLOYMENT_TARGET=11.0
-        export CFLAGS=" -isysroot $BUILD_SDK_PATH -I$LLVM_PREFIX/include "
-        export CCFLAGS=" -isysroot $BUILD_SDK_PATH -I$LLVM_PREFIX/include "
-        export CXXFLAGS=" -isysroot $BUILD_SDK_PATH -I$LLVM_PREFIX/include "
         make ARCH=${{ matrix.arch }}
         echo UPLOAD_FILE=cutter-deps-macos-${{ matrix.arch }}.tar.gz >> $GITHUB_ENV
         echo UPLOAD_ASSET_TYPE=application/gzip >> $GITHUB_ENV
