@@ -39,7 +39,7 @@ jobs:
         make
         echo UPLOAD_FILE=cutter-deps-linux-x86_64.tar.gz >> $GITHUB_ENV
         echo UPLOAD_ASSET_TYPE=application/gzip >> $GITHUB_ENV
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: ${{ env.UPLOAD_FILE }}
         path: ${{ env.UPLOAD_FILE }}
@@ -84,7 +84,7 @@ jobs:
       run: |
         echo UPLOAD_FILE=cutter-deps-win-x86_64.tar.gz >> $GITHUB_ENV
         echo UPLOAD_ASSET_TYPE=application/gzip >> $GITHUB_ENV
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: ${{ env.UPLOAD_FILE }}
         path: ${{ env.UPLOAD_FILE }}
