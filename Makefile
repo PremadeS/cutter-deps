@@ -345,8 +345,12 @@ ifeq (${PLATFORM},win)
 	cmake --install "${PYSIDE_SRC_DIR}/build/pyside6"
 	cp "${LLVM_INSTALL_DIR}/bin/libclang.dll" "${PYSIDE_PREFIX}/bin/"
 else
-	make -C "${PYSIDE_SRC_DIR}/build/pyside6" -j1
+	make -C "${PYSIDE_SRC_DIR}/build/pyside6" -j4
 	make -C "${PYSIDE_SRC_DIR}/build/pyside6" install
+endif
+
+ifeq (${PLATFORM},macos)
+	-install_name_tool -delete_rpath "/Users/runner/work/cutter-deps/cutter-deps/qt/lib" "${PYSIDE_PREFIX}/lib/libpyside6.cpython-312-darwin.6.11.0.dylib"
 endif
 
 .PHONY: clean-pyside
