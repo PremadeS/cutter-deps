@@ -283,7 +283,6 @@ pyside: ${PYTHON_DEPS} ${QT_DEPS} ${PYSIDE_SRC_DIR}
 
 	mkdir -p "${PYSIDE_SRC_DIR}/build/shiboken6_generator"
 	cd "${PYSIDE_SRC_DIR}/build/shiboken6_generator" && cmake \
-		-B "${PYSIDE_SRC_DIR}/build/shiboken6_generator" \
 		${PLATFORM_CMAKE_ARGS} \
 		-DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
 		-DCMAKE_INSTALL_PREFIX="${PYSIDE_PREFIX}" \
