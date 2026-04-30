@@ -9,9 +9,9 @@ export LLVM_INSTALL_DIR=$PWD/$LLVM_NAME
 export CMAKE_PREFIX_PATH=$LLVM_INSTALL_DIR
 
 
-# There is gcc - this should fail
 which cl
 which gcc
+which make
 export PATH=`echo $PATH | tr ":" "\n" | grep -v "mingw64" | grep -v "Strawberry" | tr "\n" ":"`
 echo $PATH
 which gcc || echo "No GCC in path, OK!"
