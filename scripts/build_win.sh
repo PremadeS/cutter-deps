@@ -11,10 +11,16 @@ export CMAKE_PREFIX_PATH=$LLVM_INSTALL_DIR
 
 which cl
 which gcc
-which make
+
+# copy make so it doesn't get removed from the path when removing gcc
+ORIGINAL_MAKE_PATH=$(which make 2>/dev/null)
+mkdir -p "$HOME/build_tools"
+cp "$ORIGINAL_MAKE_PATH" "$HOME/build_tools/"
+
 export PATH=`echo $PATH | tr ":" "\n" | grep -v "mingw64" | grep -v "Strawberry" | tr "\n" ":"`
+export PATH="$HOME/build_tools:$PATH"
 echo $PATH
 which gcc || echo "No GCC in path, OK!"
-
+which make
 
 make PLATFORM=win "PYTHON_WINDOWS=/C/hostedtoolcache/windows/Python/3.12.4/x64/"
