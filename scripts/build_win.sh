@@ -8,4 +8,9 @@ tar -xf $LLVM_ARCHIVE
 export LLVM_INSTALL_DIR=$PWD/$LLVM_NAME
 export CMAKE_PREFIX_PATH=$LLVM_INSTALL_DIR
 
+
+# There is no cl and gcc - this should fail
+which cl
+which gcc
+
 make PLATFORM=win "PYTHON_WINDOWS=/C/hostedtoolcache/windows/Python/3.12.4/x64/"
