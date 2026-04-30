@@ -348,7 +348,7 @@ else
 endif
 
 ifeq (${PLATFORM},macos)
-	install_name_tool -delete_rpath "/Users/runner/work/cutter-deps/cutter-deps/qt/lib" "${PYSIDE_PREFIX}/lib/libpyside6.cpython-312-darwin.6.11.0.dylib"
+	install_name_tool -delete_rpath "/Users/runner/work/cutter-deps/cutter-deps/qt/lib" "${PYSIDE_PREFIX}/lib/libpyside6.cpython-312-darwin.6.11.dylib"
 endif
 
 .PHONY: clean-pyside
